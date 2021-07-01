@@ -442,6 +442,7 @@ def stage_library(String stage_name) {
                             board = board.replaceAll('-', '_')
                             board_name = check.board_name.replaceAll('-', '_')
                             marker = check.marker
+                            echo pwd()
                             cmd = "python3 -m pytest --html=testhtml/report.html --junitxml=testxml/" + board + "_reports.xml --adi-hw-map -v -k 'not stress' -s --uri='ip:"+ip+"' -m " + board_name + " --capture=tee-sys" + marker
                             def statusCode = sh script:cmd, returnStatus:true
                             publishHTML(target : [escapeUnderscores: false, allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'testhtml', reportFiles: 'report.html', reportName: board, reportTitles: board])
