@@ -517,6 +517,48 @@ def stage_library(String stage_name) {
                 }
             }
             break
+    case 'NoOS':
+             cls = { String board ->
+                stage('Build and Test No OS') {
+                    def noos_folder = nebula('update-config noos-config noos_folder --board-name='+board)
+                    def baudrate = nebula('update-config uart-config baudrate --board-name='+board)
+                    def jtag_cable_id = nebula('update-config jtag-config jtag_cable_id --board-name='+board)
+                    //download HDF/XSA file
+                    nebula('dl.noosfiles --board-name=' + board + ' --source-root="' + gauntEnv.nebula_local_fs_source_root + '" --source=' + gauntEnv.bootfile_source
+                            +  ' --branch="' + gauntEnv.branches.toString() + '"')
+                    // Clone, build and test no-OS
+                    retry(3) {
+                        sleep(2);
+                        sh 'git clone --recursive -b master https://github.com/analogdevicesinc/no-OS.git'
+                    }
+                    def noos_file = 'outs/system_top.hdf'
+                    def vivado_ver = '/opt/Xilinx/Vivado/2019.1/settings64.sh'
+                    def file = new File('outs/system_top.xsa')
+                    if (file.exists) {
+                        noos_file = 'outs/system_top.xsa'
+                        vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
+                    }
+                    sh 'cp ' +noos_file+ ' no-OS/projects/'+ noos_folder +'/'
+                    dir('no-OS')
+                    {
+                        dir('projects/'+ noos_folder)
+                        {
+                            sh '. '+vivado_ver+ ' && make HARDWARE=' +noos_file+ ' TINYIIOD=y'
+                            retry(3){
+                                sleep(5);
+                                sh '. '+vivado_ver+ ' && make run' +' JTAG_CABLE_ID='+jtag_cable_id
+                            }
+                            retry(3) {
+                                echo '---------------------------'
+                                sleep(10);
+                                echo "Check context"
+                                sh 'iio_info -u serial:/dev/ttyUSB1,'+baudrate
+                            }
+                        }
+                    }  
+                }
+            }
+            break
     default:
         throw new Exception('Unknown library stage: ' + stage_name)
     }
