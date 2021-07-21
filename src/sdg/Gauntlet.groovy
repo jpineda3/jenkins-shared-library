@@ -529,7 +529,7 @@ def stage_library(String stage_name) {
                     // Clone, build and test no-OS
                     retry(3) {
                         sleep(2);
-                        sh 'git clone --recursive -b master https://github.com/analogdevicesinc/no-OS.git'
+                        sh 'git clone --recursive -b tfcollins-jtag-multi https://github.com/analogdevicesinc/no-OS.git'
                     }
                     def noos_file = 'outs/system_top.hdf'
                     def vivado_ver = '/opt/Xilinx/Vivado/2019.1/settings64.sh'
@@ -549,10 +549,10 @@ def stage_library(String stage_name) {
                                 sh '. '+vivado_ver+ ' && make run' +' JTAG_CABLE_ID='+jtag_cable_id
                             }
                             retry(3) {
-                                echo '---------------------------'
-                                sleep(10);
-                                echo "Check context"
-                                sh 'iio_info -u serial:/dev/ttyUSB1,'+baudrate
+                                //echo '---------------------------'
+                                //sleep(10);
+                                //echo "Check context"
+                                //sh 'iio_info -u serial:/dev/ttyUSB1,'+baudrate
                             }
                         }
                     }  
