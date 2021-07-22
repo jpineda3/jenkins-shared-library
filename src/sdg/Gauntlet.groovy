@@ -533,7 +533,7 @@ def stage_library(String stage_name) {
                             sleep(2);
                             sh 'git clone --recursive -b tfcollins-jtag-multi https://github.com/analogdevicesinc/no-OS.git'
                         }
-                        def noos_file = 'outs/system_top.hdf'
+                        def noos_file = 'system_top.hdf'
                         echo 'hello1'
                         def vivado_ver = '/opt/Xilinx/Vivado/2019.1/settings64.sh'
                         echo 'hello2'
@@ -544,7 +544,7 @@ def stage_library(String stage_name) {
                         //     vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
                         //     echo 'hello4'
                         // }
-                        sh 'cp ' +noos_file+ ' no-OS/projects/'+ noos_folder +'/'
+                        sh 'cp outs/' +noos_file+ ' no-OS/projects/'+ noos_folder +'/'
                         dir('no-OS')
                         {
                             dir('projects/'+ noos_folder)
