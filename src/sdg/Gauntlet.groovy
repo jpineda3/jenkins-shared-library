@@ -525,6 +525,7 @@ def stage_library(String stage_name) {
                         def noos_folder = nebula('update-config noos-config noos_folder --board-name='+board)
                         def baudrate = nebula('update-config uart-config baudrate --board-name='+board)
                         def jtag_cable_id = nebula('update-config jtag-config jtag_cable_id --board-name='+board)
+                        sh 'apt-get install libncurses5-dev libncurses5 -y'
                         //download HDF/XSA file
                         nebula('dl.noosfiles --board-name=' + board + ' --source-root="' + gauntEnv.nebula_local_fs_source_root + '" --source=' + gauntEnv.bootfile_source
                                 +  ' --branch="' + gauntEnv.branches.toString() + '"')
