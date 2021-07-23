@@ -525,25 +525,28 @@ def stage_library(String stage_name) {
                         def noos_folder = nebula('update-config noos-config noos_folder --board-name='+board)
                         def baudrate = nebula('update-config uart-config baudrate --board-name='+board)
                         def jtag_cable_id = nebula('update-config jtag-config jtag_cable_id --board-name='+board)
+                        def noos_file = 'system_top.hdf'
+                        def vivado_ver = '/opt/Xilinx/Vivado/2019.1/settings64.sh'
                         sh 'apt-get install libncurses5-dev libncurses5 -y'
                         //download HDF/XSA file
-                        nebula('dl.noosfiles --board-name=' + board + ' --source-root="' + gauntEnv.nebula_local_fs_source_root + '" --source=' + gauntEnv.bootfile_source
+                        try{
+                            nebula('dl.noosfiles --board-name=' + board + ' --source-root="' + gauntEnv.nebula_local_fs_source_root + '" --source=' + gauntEnv.bootfile_source
                                 +  ' --branch="' + gauntEnv.branches.toString() + '"')
+                        }catch(Exception ex) {
+                            //failed_test = failed_test + " [diagnostics failed: ${ex.getMessage()}]"
+                            println("No noOS support. Skipping board: "+board)
+                        }
                         // Clone, build and test no-OS
                         retry(3) {
                             sleep(2);
-                            sh 'git clone --recursive -b tfcollins-jtag-multi https://github.com/analogdevicesinc/no-OS.git'
+                            sh 'git clone --recursive -b master https://github.com/analogdevicesinc/no-OS.git'
                         }
-                        def noos_file = 'system_top.hdf'
-                        echo 'hello1'
-                        def vivado_ver = '/opt/Xilinx/Vivado/2019.1/settings64.sh'
-                        echo 'hello2'
-                        // def file = new File('outs/system_top.xsa')
-                        // echo 'hello3'
-                        // if (file.exists) {
-                        //     noos_file = 'outs/system_top.xsa'
-                        //     vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
-                        //     echo 'hello4'
+                        def file = fileExists 'system_top.xsa'
+                        echo 'hello3'
+                        if (file) {
+                            noos_file = 'system_top.xsa'
+                            vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
+                            echo 'hello4'
                         // }
                         sh 'cp outs/' +noos_file+ ' no-OS/projects/'+ noos_folder +'/'
                         dir('no-OS')
