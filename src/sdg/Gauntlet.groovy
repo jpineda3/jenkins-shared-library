@@ -541,14 +541,16 @@ def stage_library(String stage_name) {
                             sleep(2);
                             sh 'git clone --recursive -b tfcollins-jtag-multi https://github.com/analogdevicesinc/no-OS.git'
                         }
-                        def file = fileExists 'outs/system_top.xsa'
-                        echo file
-                        echo 'hello3'
-                        if (file) {
-                            noos_file = 'system_top.xsa'
-                            vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
+                        // def file = fileExists 'outs/system_top.xsa'
+                        // echo file
+                        // echo 'hello3'
+                        if (fileExists('outs/system_top.xsa')) {
                             echo 'hello4'
-                         }
+                            noos_file = 'system_top.xsa'
+                            echo 'hello5'
+                            vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
+                            echo 'hello6'
+                        }
                         sh 'cp outs/' +noos_file+ ' no-OS/projects/'+ noos_folder +'/'
                         dir('no-OS')
                         {
