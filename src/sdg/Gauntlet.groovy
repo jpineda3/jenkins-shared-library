@@ -539,7 +539,7 @@ def stage_library(String stage_name) {
                         // Clone, build and test no-OS
                         retry(3) {
                             sleep(2);
-                            sh 'git clone --recursive -b master https://github.com/analogdevicesinc/no-OS.git'
+                            sh 'git clone --recursive -b tfcollins-jtag-multi https://github.com/analogdevicesinc/no-OS.git'
                         }
                         def file = fileExists 'system_top.xsa'
                         echo 'hello3'
