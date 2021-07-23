@@ -546,7 +546,7 @@ def stage_library(String stage_name) {
                         // echo 'hello3'
                         if (fileExists('outs/system_top.xsa')) {
                             echo 'hello4'
-                            sh ln /usr/bin/make /usr/bin/gmake
+                            sh 'ln /usr/bin/make /usr/bin/gmake'
                             noos_file = 'system_top.xsa'
                             echo 'hello5'
                             vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
