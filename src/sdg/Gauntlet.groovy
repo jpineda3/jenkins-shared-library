@@ -547,7 +547,7 @@ def stage_library(String stage_name) {
                             noos_file = 'system_top.xsa'
                             vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
                             echo 'hello4'
-                        // }
+                         }
                         sh 'cp outs/' +noos_file+ ' no-OS/projects/'+ noos_folder +'/'
                         dir('no-OS')
                         {
