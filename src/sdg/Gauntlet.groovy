@@ -525,6 +525,7 @@ def stage_library(String stage_name) {
                         def noos_folder = nebula('update-config noos-config noos_folder --board-name='+board)
                         def baudrate = nebula('update-config uart-config baudrate --board-name='+board)
                         def jtag_cable_id = nebula('update-config jtag-config jtag_cable_id --board-name='+board)
+                        def tty = nebula('update-config uart-config address --board-name='+board)
                         def noos_file = 'system_top.hdf'
                         def vivado_ver = '/opt/Xilinx/Vivado/2019.1/settings64.sh'
                         sh 'apt-get install libncurses5-dev libncurses5 -y'
@@ -533,24 +534,17 @@ def stage_library(String stage_name) {
                             nebula('dl.noosfiles --board-name=' + board + ' --source-root="' + gauntEnv.nebula_local_fs_source_root + '" --source=' + gauntEnv.bootfile_source
                                 +  ' --branch="' + gauntEnv.branches.toString() + '"')
                         }catch(Exception ex) {
-                            //failed_test = failed_test + " [diagnostics failed: ${ex.getMessage()}]"
-                            println("No noOS support. Skipping board: "+board)
+                            println("No no-OS support. Skipping board: "+board)
                         }
                         // Clone, build and test no-OS
                         retry(3) {
                             sleep(2);
                             sh 'git clone --recursive -b tfcollins-jtag-multi https://github.com/analogdevicesinc/no-OS.git'
                         }
-                        // def file = fileExists 'outs/system_top.xsa'
-                        // echo file
-                        // echo 'hello3'
                         if (fileExists('outs/system_top.xsa')) {
-                            echo 'hello4'
                             sh 'ln /usr/bin/make /usr/bin/gmake'
                             noos_file = 'system_top.xsa'
-                            echo 'hello5'
                             vivado_ver = '/opt/Xilinx/Vitis/2020.1/settings64.sh'
-                            echo 'hello6'
                         }
                         sh 'cp outs/' +noos_file+ ' no-OS/projects/'+ noos_folder +'/'
                         dir('no-OS')
@@ -563,10 +557,10 @@ def stage_library(String stage_name) {
                                     sh '. '+vivado_ver+ ' && make run' +' JTAG_CABLE_ID='+jtag_cable_id
                                 }
                                 retry(3) {
-                                    //echo '---------------------------'
-                                    //sleep(10);
-                                    //echo "Check context"
-                                    //sh 'iio_info -u serial:/dev/ttyUSB1,'+baudrate
+                                    echo '---------------------------'
+                                    sleep(10);
+                                    echo "Check context"
+                                    sh 'iio_info -u serial:' +tty+ ','+baudrate
                                 }
                             }
                         }  
