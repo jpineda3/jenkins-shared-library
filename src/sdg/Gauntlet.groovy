@@ -523,9 +523,9 @@ def stage_library(String stage_name) {
                     def pwd = sh(returnStdout: true, script: 'pwd').trim()
                     withEnv(['VERBOSE=1', 'BUILD_DIR=' +pwd]) {
                         def noos_folder = nebula('update-config noos-config noos_folder --board-name='+board)
-                        def baudrate = nebula('update-config uart-config baudrate --board-name='+board)
+                        //def baudrate = nebula('update-config uart-config baudrate --board-name='+board)
                         def jtag_cable_id = nebula('update-config jtag-config jtag_cable_id --board-name='+board)
-                        def tty = nebula('update-config uart-config address --board-name='+board)
+                        def serial = nebula('update-config uart-config address --board-name='+board)
                         def noos_file = 'system_top.hdf'
                         def vivado_ver = '/opt/Xilinx/Vivado/2019.1/settings64.sh'
                         sh 'apt-get install libncurses5-dev libncurses5 -y'
@@ -560,7 +560,7 @@ def stage_library(String stage_name) {
                                     echo '---------------------------'
                                     sleep(10);
                                     echo "Check context"
-                                    sh 'iio_info -u serial:' +tty+ ','+baudrate
+                                    sh 'iio_info -u serial:' + serial + ',' +gauntEnv.iio_uri_baudrate.toString()
                                 }
                             }
                         }  
@@ -627,7 +627,6 @@ private def run_agents() {
     docker_args.add('-v /etc/default:/default:ro')
     docker_args.add('-v /dev:/dev')
     docker_args.add('-v /usr/app:/app')
-    docker_args.add('--tty')
     if (gauntEnv.docker_host_mode) {
         docker_args.add('--network host')
     }
