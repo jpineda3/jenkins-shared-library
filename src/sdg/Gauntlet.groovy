@@ -859,6 +859,10 @@ def set_matlab_commands(List matlab_commands) {
     gauntEnv.matlab_commands = matlab_commands
 }
 
+def isMultiBranchPipeline() {
+    return Jenkins.get().getItem(currentBuild.projectName) instanceof WorkflowMultiBranchProject
+}
+
 /**
  * Main method for starting pipeline once configuration is complete
  * Once called all agents are queried for attached boards and parallel stages
@@ -1291,21 +1295,21 @@ private def String getStackTrace(Throwable aThrowable){
     return baos.toString();
 }
 
-private def isMultiBranchPipeline() {
-    // Utility to check if current project is a multibranch pipeline job
-    isMultiBranch = false
-    println("Checking if multibranch pipeline..")
-    try
-    {
-        checkout scm
-        isMultiBranch = true
-    }
-    catch(all)
-    {
-        println("Not a multibranch pipeline")
-    }
-    return isMultiBranch
-}
+// private def isMultiBranchPipeline() {
+//     // Utility to check if current project is a multibranch pipeline job
+//     isMultiBranch = false
+//     println("Checking if multibranch pipeline..")
+//     try
+//     {
+//         checkout scm
+//         isMultiBranch = true
+//     }
+//     catch(all)
+//     {
+//         println("Not a multibranch pipeline")
+//     }
+//     return isMultiBranch
+// }
 
 private def  createMFile(){
     // Utility method to write matlab commands in a .m file
