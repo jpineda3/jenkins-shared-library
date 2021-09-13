@@ -862,8 +862,14 @@ def set_matlab_commands(List matlab_commands) {
 }
 
 def isMultiBranchPipeline() {
-    println(Jenkins.get().getItem(currentBuild.projectName))
-    return Jenkins.get().getItem(currentBuild.projectName) instanceof WorkflowMultiBranchProject
+    projectName = Jenkins.get().getItem(env.projectName)
+    println(projectName)
+    println(env.JOB_NAME)
+    isMultiBranch = projectName instanceof WorkflowMultiBranchProject
+    println(isMultiBranch)
+    return isMultiBranch
+    // isMultiBranch = Jenkins.get().getItem(currentBuild.projectName) instanceof WorkflowMultiBranchProject
+    // return Jenkins.get().getItem(currentBuild.projectName) instanceof WorkflowMultiBranchProject
 }
 
 /**
