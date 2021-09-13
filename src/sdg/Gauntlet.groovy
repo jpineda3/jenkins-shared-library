@@ -865,6 +865,7 @@ def isMultiBranchPipeline() {
     projectName = Jenkins.get().getItem(env.projectName)
     projectName1 = Jenkins.get().getItem(gauntEnv.projectName)
     println(projectName)
+    println(projectName1)
     println(env.JOB_NAME)
     println(gauntEnv.job_trigger)
     isMultiBranch = projectName instanceof WorkflowMultiBranchProject
