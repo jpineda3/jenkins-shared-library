@@ -866,7 +866,7 @@ def isMultiBranchPipeline() {
     projectName1 = Jenkins.get().getItem(gauntEnv.projectName)
     projectName2 = Jenkins.get().getItem(currentBuild.projectName)
     projectName3 = currentBuild.projectName
-    projectName3 = currentBuild.displayName
+    projectName4 = currentBuild.displayName
     println(projectName)
     println(projectName1)
     println(projectName2)
