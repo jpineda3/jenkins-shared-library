@@ -1,6 +1,7 @@
 package sdg
 import sdg.FailSafeWrapper
 import sdg.NominalException
+import jenkins.model.Jenkins
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject
 
 /** A map that holds all constants and data members that can be override when constructing  */
