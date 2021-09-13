@@ -862,9 +862,9 @@ def set_matlab_commands(List matlab_commands) {
 }
 
 def isMultiBranchPipeline() {
-    projectName = Jenkins.get().getItems(env.projectName)
-    projectName1 = Jenkins.get().getItems(gauntEnv.projectName)
-    projectName2 = Jenkins.get().getItems(currentBuild..projectName)
+    projectName = Jenkins.get().getItem(env.projectName)
+    projectName1 = Jenkins.get().getItem(gauntEnv.projectName)
+    projectName2 = Jenkins.get().getItem(currentBuild.projectName)
     println(projectName)
     println(projectName1)
     println(projectName2)
