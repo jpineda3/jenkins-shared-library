@@ -533,7 +533,8 @@ def stage_library(String stage_name) {
                 sh 'cp -r /root/.matlabro /root/.matlab'
                 under_scm = isMultiBranchPipeline()
                 if (under_scm)
-                {
+                {   
+                    println("Multibranch pipeline")
                     retry(3) {
                         sleep(5)
                         checkout scm
@@ -545,6 +546,7 @@ def stage_library(String stage_name) {
                 }
                 else
                 {   
+                    println("Not a multibranch pipeline")
                     sh 'git clone --recursive -b '+gauntEnv.matlab_branch+' '+gauntEnv.matlab_repo+' Toolbox'
                     dir('Toolbox')
                     {
