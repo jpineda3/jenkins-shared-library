@@ -862,23 +862,23 @@ def set_matlab_commands(List matlab_commands) {
 }
 
 def isMultiBranchPipeline() {
-    // print(currentBuild.projectName)
-    // print(Jenkins.get().getItem(currentBuild.projectName))
-    // return Jenkins.get().getItem(currentBuild.projectName) instanceof WorkflowMultiBranchProject
+    print(currentBuild.projectName)
+    print(Jenkins.get().getItem(currentBuild.projectName))
+    return Jenkins.get().getItem(currentBuild.projectName) instanceof WorkflowMultiBranchProject
 
-    // Utility to check if current project is a multibranch pipeline job
-    isMultiBranch = false
-    println("Checking if multibranch pipeline..")
-    try
-    {
-        checkout scm
-        isMultiBranch = true
-    }
-    catch(all)
-    {
-        println("Not a multibranch pipeline")
-    }
-    return isMultiBranch
+    // // Utility to check if current project is a multibranch pipeline job
+    // isMultiBranch = false
+    // println("Checking if multibranch pipeline..")
+    // try
+    // {
+    //     checkout scm
+    //     isMultiBranch = true
+    // }
+    // catch(all)
+    // {
+    //     println("Not a multibranch pipeline")
+    // }
+    // return isMultiBranch
 }
 
 /**
