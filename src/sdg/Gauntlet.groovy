@@ -546,7 +546,7 @@ def stage_library(String stage_name) {
                 }
                 else
                 {   
-                    println("Not a multibranch pipeline. Cloning "+gauntEnv.matlab_branch+" branch from "+gauntEnv.matlab_repo")
+                    println("Not a multibranch pipeline. Cloning "+gauntEnv.matlab_branch+" branch from "+gauntEnv.matlab_repo)
                     sh 'git clone --recursive -b '+gauntEnv.matlab_branch+' '+gauntEnv.matlab_repo+' Toolbox'
                     dir('Toolbox')
                     {
