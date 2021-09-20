@@ -523,9 +523,41 @@ def stage_library(String stage_name) {
                 }
             }
             break
+    // case 'MATLABTests':
+        // cls = { String board ->
+        //     def under_scm = true
+        //     stage("Run MATLAB Toolbox Tests") {
+        //         def ip = nebula('update-config network-config dutip --board-name='+board)
+        //         sh 'cp -r /root/.matlabro /root/.matlab'
+        //         under_scm = isMultiBranchPipeline()
+        //         if (under_scm)
+        //         {   
+        //             println("Multibranch pipeline. Checkout scm.")
+        //             retry(3) {
+        //                 sleep(5)
+        //                 checkout scm
+        //                 sh 'git submodule update --init'
+        //             }
+        //             createMFile()
+        //             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
+        //             junit testResults: '*.xml', allowEmptyResults: true
+        //         }
+        //         else
+        //         {   
+        //             println("Not a multibranch pipeline. Cloning "+gauntEnv.matlab_branch+" branch from "+gauntEnv.matlab_repo)
+        //             sh 'git clone --recursive -b '+gauntEnv.matlab_branch+' '+gauntEnv.matlab_repo+' Toolbox'
+        //             dir('Toolbox')
+        //             {
+        //                 createMFile()
+        //                 sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit()"'
+        //                 junit testResults: '*.xml', allowEmptyResults: true
+        //             }
+        //         }
+        //     }
+        // }
     case 'MATLABTests':
         cls = { String board ->
-            def under_scm = true
+            def under_scm = True
             stage("Run MATLAB Toolbox Tests") {
                 def ip = nebula('update-config network-config dutip --board-name='+board)
                 sh 'cp -r /root/.matlabro /root/.matlab'
@@ -549,10 +581,40 @@ def stage_library(String stage_name) {
                     dir('Toolbox')
                     {
                         createMFile()
-                        sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit()"'
+                        // cmd = "python3 -m pytest --html=testhtml/report.html --junitxml=testxml/" + board + "_reports.xml --adi-hw-map -v -k 'not stress' -s --uri='ip:"+ip+"' -m " + board_name + " --capture=tee-sys" + marker
+                        cmd = "IIO_URI='ip:"+ip+"' board='"+board+"' elasticserver='"+gauntEnv.elastic_server+"' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r \"run(\'matlab_commands.m\');exit()\""
+                        def statusCode = sh script:cmd, returnStatus:true
+                        // sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit()"'
+                        if (statusCode != 0){
+                            throw new NominalException('MATLAB Tests Failed')
+                        } 
                         junit testResults: '*.xml', allowEmptyResults: true
                     }
                 }
+
+
+                // cmd = "python3 -m pytest --html=testhtml/report.html --junitxml=testxml/" + board + "_reports.xml --adi-hw-map -v -k 'not stress' -s --uri='ip:"+ip+"' -m " + board_name + " --capture=tee-sys" + marker
+                // def statusCode = sh script:cmd, returnStatus:true
+                // publishHTML(target : [escapeUnderscores: false, allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'testhtml', reportFiles: 'report.html', reportName: board, reportTitles: board])
+                // // get pytest results for logging
+                // try{
+                //     def pytest_logs = ['errors', 'failures', 'skipped', 'tests']
+                //     pytest_logs.each {
+                //         cmd = 'cat testxml/' + board + '_reports.xml | sed -rn \'s/.*' 
+                //         cmd+= it + '="([0-9]+)".*/\\1/p\''
+                //         println(cmd)
+                //         set_elastic_field(board.replaceAll('_', '-'), it, sh(returnStdout: true, script: cmd).trim())
+                //     }
+                //     println(gauntEnv.elastic_logs[board])
+                // }catch(Exception ex){
+                //     println(ex)
+                //     throw new NominalException('PyADITests Failed')
+                // }
+                
+                // if ((statusCode != 5) && (statusCode != 0)){
+                //     // Ignore error 5 which means no tests were run
+                //     throw new NominalException('PyADITests Failed')
+                // }   
             }
         }
             break
