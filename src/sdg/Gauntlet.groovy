@@ -550,7 +550,7 @@ def stage_library(String stage_name) {
                     {
                         createMFile()
                         try {
-                            cdm = "IIO_URI=\"ip:"+ip+"\" board=\'"+board+"\" elasticserver="+gauntlet.elastic_server+" /usr/local/MATLAB/"+gauntEnv.matlab_release+"/bin/matlab -nosplash -nodesktop -nodisplay -r \"run(\'matlab_commands.m\');exit\""
+                            cmd = "IIO_URI=\"ip:"+ip+"\" board=\'"+board+"\" elasticserver="+gauntlet.elastic_server+" /usr/local/MATLAB/"+gauntEnv.matlab_release+"/bin/matlab -nosplash -nodesktop -nodisplay -r \"run(\'matlab_commands.m\');exit\""
                             def statusCode = sh script:cmd, returnStatus:true
                             println(statusCode)
                         }finally{
