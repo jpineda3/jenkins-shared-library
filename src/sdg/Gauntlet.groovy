@@ -550,9 +550,10 @@ def stage_library(String stage_name) {
                     {
                         createMFile()
                         try {
-                            cmd = "IIO_URI=\"ip:"+ip+"\" board=\'"+board+"\" elasticserver="+gauntlet.elastic_server+" /usr/local/MATLAB/"+gauntEnv.matlab_release+"/bin/matlab -nosplash -nodesktop -nodisplay -r \"run(\'matlab_commands.m\');exit\""
-                            def statusCode = sh script:cmd, returnStatus:true
-                            println(statusCode)
+                            // cmd = "IIO_URI=\"ip:"+ip+"\" board=\'"+board+"\" elasticserver="+gauntlet.elastic_server+" /usr/local/MATLAB/"+gauntEnv.matlab_release+"/bin/matlab -nosplash -nodesktop -nodisplay -r \"run(\'matlab_commands.m\');exit\""
+                            // def statusCode = sh script:cmd, returnStatus:true
+                            // println(statusCode)
+                            sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit()"'
                         }finally{
                             junit testResults: '*.xml', allowEmptyResults: true
                             // if (statusCode != 0){
