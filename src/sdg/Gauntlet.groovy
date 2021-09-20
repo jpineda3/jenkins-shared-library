@@ -527,36 +527,37 @@ def stage_library(String stage_name) {
         cls = { String board ->
             def under_scm = true
             stage("Run MATLAB Toolbox Tests") {
-                try{
-                    def ip = nebula('update-config network-config dutip --board-name='+board)
-                    sh 'cp -r /root/.matlabro /root/.matlab'
-                    under_scm = isMultiBranchPipeline()
-                
-                    if (under_scm)
-                    {   
-                        println("Multibranch pipeline. Checkout scm.")
-                        retry(3) {
-                            sleep(5)
-                            checkout scm
-                            sh 'git submodule update --init'
-                        }
-                        createMFile()
-                        sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
-                        // junit testResults: '*.xml', allowEmptyResults: true
+                def ip = nebula('update-config network-config dutip --board-name='+board)
+                sh 'cp -r /root/.matlabro /root/.matlab'
+                under_scm = isMultiBranchPipeline()
+                if (under_scm)
+                {   
+                    println("Multibranch pipeline. Checkout scm.")
+                    retry(3) {
+                        sleep(5)
+                        checkout scm
+                        sh 'git submodule update --init'
                     }
-                    else
-                    {   
-                        println("Not a multibranch pipeline. Cloning "+gauntEnv.matlab_branch+" branch from "+gauntEnv.matlab_repo)
-                        sh 'git clone --recursive -b '+gauntEnv.matlab_branch+' '+gauntEnv.matlab_repo+' Toolbox'
-                        dir('Toolbox')
-                        {
-                            createMFile()
+                    createMFile()
+                    try{
+                        sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
+                    }finally{
+                        junit testResults: '*.xml', allowEmptyResults: true
+                    }
+                }
+                else
+                {   
+                    println("Not a multibranch pipeline. Cloning "+gauntEnv.matlab_branch+" branch from "+gauntEnv.matlab_repo)
+                    sh 'git clone --recursive -b '+gauntEnv.matlab_branch+' '+gauntEnv.matlab_repo+' Toolbox'
+                    dir('Toolbox')
+                    {
+                        createMFile()
+                        try {
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit()"'
+                        }finally{
+                            junit testResults: '*.xml', allowEmptyResults: true
                         }
-                    } 
-                }finally{
-                    junit testResults: '*.xml', allowEmptyResults: true
-
+                    }
                 }
             }
         }
