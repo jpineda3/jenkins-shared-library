@@ -910,7 +910,7 @@ def logJira(carrier, daughter, attachmentFile) {
     def ticket = existingIssuesSearch.data.issues
     if (ticket != null){ // Comment on existing Jira ticket
         //Get all issues
-        def ticket = existingIssuesSearch.data.issues
+        // def ticket = existingIssuesSearch.data.issues
         //Get the key of the first result
         def key = ticket[0].key
         // echo key
