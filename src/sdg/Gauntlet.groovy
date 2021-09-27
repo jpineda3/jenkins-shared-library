@@ -909,7 +909,8 @@ def logJira(carrier, daughter, attachmentFile) {
 
     def existingIssuesSearch  = jiraJqlSearch jql: "project='${projectName}' and summary  ~ '\"${error_message}\"'", site: 'sdg-jira', failOnError: true
     echo existingIssuesSearch.data.toString()
-    if (existingIssuesSearch != null){ // Comment on existing Jira ticket
+    if (existingIssuesSearch.data.total != 0){
+    // if (existingIssuesSearch != null){ // Comment on existing Jira ticket
         //Get all issues
         def ticket = existingIssuesSearch.data.issues
         //Get the key of the first result
