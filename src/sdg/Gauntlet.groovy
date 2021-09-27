@@ -897,9 +897,10 @@ def isMultiBranchPipeline() {
 def logJira(carrier, daughter, attachmentFile) {
     def jiraServer = 'sdg-jira' //declare this as global var
     def projectID = '15328' // GTSQA project
+    println(env.STAGE_NAME)
     switch (env.STAGE_NAME){
         case 'PyADITests':
-        errorMessage = 'Python tests failed'
+            errorMessage = 'Python tests failed'
         case 'MATLABTests':
             errorMessage = 'MATLAB Toolbox tests failed'
     }
