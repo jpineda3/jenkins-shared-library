@@ -561,7 +561,7 @@ def stage_library(String stage_name) {
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
                         }finally{
                             junit testResults: '*.xml', allowEmptyResults: true
-                            logJira(carrier,daughter,'attachment.log')     
+                            logJira(carrier,daughter)     
                         }
                     }
                 }
@@ -897,8 +897,6 @@ def isMultiBranchPipeline() {
 def logJira(carrier, daughter, attachmentFile) {
     def jiraServer = 'sdg-jira' //declare this as global var
     def projectID = '15328' // GTSQA project
-    def projectName = 'GTSQA'
-    println(env.STAGE_NAME)
     switch (env.STAGE_NAME){
         case 'PyADITests':
             errorMessage = 'Python tests failed'
@@ -910,24 +908,32 @@ def logJira(carrier, daughter, attachmentFile) {
     def existingIssuesSearch  = jiraJqlSearch jql: "project='${projectID}' and summary  ~ '\"${error_message}\"'", site: 'sdg-jira', failOnError: true
     echo existingIssuesSearch.data.toString()
     if (existingIssuesSearch.data.total != 0){ // Comment on existing Jira ticket
+        echo 'Updating existing ticket.'
         def ticket = existingIssuesSearch.data.issues
         def key = ticket[0].key
         ticketUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+'] Issue exists in recent build.'
         def comment = [body: ticketUpdate]
         jiraAddComment site: jiraServer, idOrKey: key, input: comment
+        // Upload attachment if any
+        if (attachment != null){
+            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+        }
     }
     else{ // Create new Jira ticket
+        echo 'Creating new Jira ticket.'
         def issue = [fields: [
             project: [id: projectID],
             summary: error_message,
             issuetype: [name: 'Bug'],
             assignee: [name: 'JPineda3']]]
-            
             def newIssue = jiraNewIssue issue: issue, site: jiraServer
             def key = newIssue.data.key
+            
+            // Upload attachment if any
+            if (attachment != null){
+                def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+            }
     }
-    // Upload attachment
-    def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
 }
 
 /**
