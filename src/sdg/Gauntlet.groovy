@@ -898,7 +898,7 @@ def logJira(carrier, daughter, attachmentFile) {
     def jiraServer = 'sdg-jira' //declare this as global var
     def projectID = '15328' // GTSQA project
     switch (env.STAGE_NAME){
-        case 'PyADITests':
+        case 'Run Python Tests':
             errorMessage = 'Python tests failed'
         case 'Run MATLAB Toolbox Tests':
             errorMessage = 'MATLAB Toolbox tests failed'
@@ -915,7 +915,7 @@ def logJira(carrier, daughter, attachmentFile) {
         def comment = [body: ticketUpdate]
         jiraAddComment site: jiraServer, idOrKey: key, input: comment
         // Upload attachment if any
-        if (attachment != null){
+        if (attachmentFile != null){
             def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
         }
     }
@@ -930,7 +930,7 @@ def logJira(carrier, daughter, attachmentFile) {
             def key = newIssue.data.key
             
             // Upload attachment if any
-            if (attachment != null){
+            if (attachmentFile != null){
                 def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
             }
     }
