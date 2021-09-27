@@ -561,7 +561,7 @@ def stage_library(String stage_name) {
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
                         }finally{
                             junit testResults: '*.xml', allowEmptyResults: true
-                            logJira(carrier,daughter)     
+                            logJira(carrier,daughter,'attachment.log')     
                         }
                     }
                 }
@@ -915,9 +915,7 @@ def logJira(carrier, daughter, attachmentFile) {
         def comment = [body: ticketUpdate]
         jiraAddComment site: jiraServer, idOrKey: key, input: comment
         // Upload attachment if any
-        if (attachmentFile != null){
-            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
-        }
+        def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
     }
     else{ // Create new Jira ticket
         echo 'Creating new Jira ticket.'
@@ -930,9 +928,7 @@ def logJira(carrier, daughter, attachmentFile) {
             def key = newIssue.data.key
             
             // Upload attachment if any
-            if (attachmentFile != null){
-                def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
-            }
+            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
     }
 }
 
