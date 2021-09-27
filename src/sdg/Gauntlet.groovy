@@ -907,7 +907,8 @@ def logJira(carrier, daughter, attachmentFile) {
     def error_message = '['+carrier+'-'+daughter+'] '+errorMessage
 
     def existingIssuesSearch  = jiraJqlSearch jql: "project='${projectID}' and summary  ~ '\"${error_message}\"'", site: 'sdg-jira', failOnError: true
-    if (existingIssuesSearch != null){ // Comment on existing Jira ticket
+    def ticket = existingIssuesSearch.data.issues
+    if (ticket != null){ // Comment on existing Jira ticket
         //Get all issues
         def ticket = existingIssuesSearch.data.issues
         //Get the key of the first result
@@ -916,7 +917,7 @@ def logJira(carrier, daughter, attachmentFile) {
         ticketUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+'] Issue exists in recent build.'
         def comment = [body: ticketUpdate]
         jiraAddComment site: jiraServer, idOrKey: key, input: comment
-        def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+        // def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
         // echo attachment.data.toString()
     }
     else{ // Create new Jira ticket
@@ -928,8 +929,9 @@ def logJira(carrier, daughter, attachmentFile) {
             
             def newIssue = jiraNewIssue issue: issue, site: jiraServer
             def key = newIssue.data.key
-            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+            // def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
     }
+    def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
 }
 
 /**
