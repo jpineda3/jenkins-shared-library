@@ -532,7 +532,7 @@ def stage_library(String stage_name) {
                 def daughter = nebula('update-config jira-config daughter --board-name='+board )
                 println(carrier)
                 println(daughter)
-                
+
                 sh 'cp -r /root/.matlabro /root/.matlab'
                 under_scm = isMultiBranchPipeline()
                 if (under_scm)
@@ -560,7 +560,8 @@ def stage_library(String stage_name) {
                         try{
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
                         }finally{
-                            junit testResults: '*.xml', allowEmptyResults: true    
+                            junit testResults: '*.xml', allowEmptyResults: true
+                            logJIRA()     
                         }
                     }
                 }
@@ -887,6 +888,48 @@ def isMultiBranchPipeline() {
         println("Not a multibranch pipeline")
     }
     return isMultiBranch
+}
+
+/**
+ * Creates or updates existing Jira ticket for carrier-daughter board
+ * Each stage has its own Jira thread for each carrier-daughter board
+ */
+def logJIRA() {
+    def jiraServer = 'sdg-jira' //declare this as global var
+    def projectID = '15328' // GTSQA project
+    def carrier = nebula('update-config jira-config carrier --board-name='+board )
+    def daughter = nebula('update-config jira-config daughter --board-name='+board )
+    switch (env.STAGE_NAME){
+        case 'PyADITests':
+        errorMessage = 'Python tests failed'
+        case 'MATLABTests':
+            errorMessage = 'MATLAB Toolbox tests failed'
+    }
+    def error_message = '['+carrier+'-'+daughter+'] '+errorMessage
+
+    def existingIssuesSearch  = jiraJqlSearch jql: "project='${projectID}' and summary  ~ '\"${error_message}\"'", site: 'sdg-jira', failOnError: true
+    if (existingIssuesSearch != null){ // Comment on existing Jira ticket
+        //Get all issues
+        def ticket = existingIssuesSearch.data.issues
+        //Get the key of the first result
+        def key = ticket[0].key
+        // echo key
+        ticketUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+'] Issue exists in recent build.'
+        def comment = [body: ticketUpdate]
+        jiraAddComment site: jiraServer, idOrKey: key, input: comment
+        def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: 'attachment.log'
+        // echo attachment.data.toString()
+    }
+    else{ // Create new Jira ticket
+        def issue = [fields: [
+            project: [id: projectID],
+            summary: error_message,
+            issuetype: [name: 'Bug'],
+            assignee: [name: 'JPineda3']]]
+            
+            def newIssue = jiraNewIssue issue: issue, site: jiraServer
+            echo newIssue.data.key
+    }
 }
 
 /**
