@@ -901,7 +901,7 @@ def logJira(carrier, daughter, attachmentFile) {
     switch (env.STAGE_NAME){
         case 'PyADITests':
             errorMessage = 'Python tests failed'
-        case 'MATLABTests':
+        case 'Run MATLAB Toolbox Tests':
             errorMessage = 'MATLAB Toolbox tests failed'
     }
     def error_message = '['+carrier+'-'+daughter+'] '+errorMessage
