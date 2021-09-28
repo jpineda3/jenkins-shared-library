@@ -563,7 +563,7 @@ def stage_library(String stage_name) {
                         }finally{
                             junit testResults: '*.xml', allowEmptyResults: true
                             if (gauntEnv.log_jira) {
-                                logJira(carrier,daughter,'attachment.log')  
+                                logJira(carrier,daughter)  
                             }
                                
                         }
