@@ -801,6 +801,14 @@ def set_nebula_debug(nebula_debug) {
 }
 
 /**
+ * Enable logging issues to Jira. Setting true will update existing Jira issues or create a new issue.
+ * @param log_jira Boolean of enable jira logging.
+ */
+def set_log_jira(log_jira) {
+    gauntEnv.log_jira = log_jira
+}
+
+/**
  * Set nebula downloader local_fs source_path.
  * @param nebula_local_fs_source_root String of path
  */
