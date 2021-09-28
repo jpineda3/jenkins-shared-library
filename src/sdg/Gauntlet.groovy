@@ -563,7 +563,7 @@ def stage_library(String stage_name) {
                         }finally{
                             junit testResults: '*.xml', allowEmptyResults: true
                             if (gauntEnv.log_jira) {
-                                logJira(carrier,daughter)  
+                                logJira(carrier,daughter,['info.xml','Jenkinsfile'])  
                             }
                                
                         }
@@ -903,10 +903,11 @@ def isMultiBranchPipeline() {
 }
 
 /**
- * Creates or updates existing Jira ticket for carrier-daughter board
+ * Creates or updates existing Jira issue for carrier-daughter board
  * Each stage has its own Jira thread for each carrier-daughter board
+ * attachments is a list of filesnames to upload in the Jira issue
  */
-def logJira(carrier, daughter, def attachmentFile = null) {
+def logJira(carrier, daughter, def attachments = null) {
     def jiraServer = 'sdg-jira' //declare this as global var
     def projectID = '15328' // GTSQA project
     def key = ''
@@ -940,8 +941,10 @@ def logJira(carrier, daughter, def attachmentFile = null) {
         key = newIssue.data.key
     }
 
-    if (attachmentFile != null){ // Upload attachment if any
-        def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+    if (attachments != null){ // Upload attachment if any
+        for (attachmentFile in attachments){
+            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+        } 
     }
 }
 
