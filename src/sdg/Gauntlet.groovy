@@ -909,6 +909,7 @@ def isMultiBranchPipeline() {
 def logJira(carrier, daughter, def attachmentFile = null) {
     def jiraServer = 'sdg-jira' //declare this as global var
     def projectID = '15328' // GTSQA project
+    def key = ''
     switch (env.STAGE_NAME){
         case 'Run Python Tests':
             errorMessage = 'Python tests failed'
@@ -921,14 +922,14 @@ def logJira(carrier, daughter, def attachmentFile = null) {
     echo existingIssuesSearch.data.toString()
     if (existingIssuesSearch.data.total != 0){ // Comment on existing Jira ticket
         echo 'Updating existing ticket.'
-        def ticket = existingIssuesSearch.data.issues
-        def key = ticket[0].key
-        ticketUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+'] Issue exists in recent build.'
-        def comment = [body: ticketUpdate]
+        def existingIssue = existingIssuesSearch.data.issues
+        key = existingIssue[0].key
+        issuetUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+'] Issue exists in recent build.'
+        def comment = [body: issuetUpdate]
         jiraAddComment site: jiraServer, idOrKey: key, input: comment
-        if (attachmentFile != null){ // Upload attachment if any
-            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
-        }
+        // if (attachmentFile != null){ // Upload attachment if any
+        //     def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+        // }
     }
     else{ // Create new Jira ticket
         echo 'Creating new Jira ticket.'
@@ -938,11 +939,14 @@ def logJira(carrier, daughter, def attachmentFile = null) {
             issuetype: [name: 'Bug'],
             assignee: [name: 'JPineda3']]]
             def newIssue = jiraNewIssue issue: issue, site: jiraServer
-            def key = newIssue.data.key
+            key = newIssue.data.key
             
-            if (attachmentFile != null){ // Upload attachment if any
-            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
-        }
+            // if (attachmentFile != null){ // Upload attachment if any
+            // def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+            // }
+    }
+    if (attachmentFile != null){ // Upload attachment if any
+        def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
     }
 }
 
