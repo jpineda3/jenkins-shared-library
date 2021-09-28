@@ -43,6 +43,7 @@ def construct(List dependencies, hdlBranch, linuxBranch, bootPartitionBranch, fi
             enable_resource_queuing: false,
             setup_called: false,
             nebula_debug: false,
+            log_jira: false,
             nebula_local_fs_source_root: '/var/lib/tftpboot',
             elastic_server: '',
             iio_uri_source: 'ip',
@@ -561,7 +562,10 @@ def stage_library(String stage_name) {
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
                         }finally{
                             junit testResults: '*.xml', allowEmptyResults: true
-                            logJira(carrier,daughter,'attachment.log')     
+                            if (gauntEnv.log_jira) {
+                                logJira(carrier,daughter,'attachment.log')  
+                            }
+                               
                         }
                     }
                 }
@@ -894,7 +898,7 @@ def isMultiBranchPipeline() {
  * Creates or updates existing Jira ticket for carrier-daughter board
  * Each stage has its own Jira thread for each carrier-daughter board
  */
-def logJira(carrier, daughter, attachmentFile) {
+def logJira(carrier, daughter, def attachmentFile = null) {
     def jiraServer = 'sdg-jira' //declare this as global var
     def projectID = '15328' // GTSQA project
     switch (env.STAGE_NAME){
@@ -914,8 +918,9 @@ def logJira(carrier, daughter, attachmentFile) {
         ticketUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+'] Issue exists in recent build.'
         def comment = [body: ticketUpdate]
         jiraAddComment site: jiraServer, idOrKey: key, input: comment
-        // Upload attachment if any
-        def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+        if (attachmentFile != null){ // Upload attachment if any
+            def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+        }
     }
     else{ // Create new Jira ticket
         echo 'Creating new Jira ticket.'
@@ -927,8 +932,9 @@ def logJira(carrier, daughter, attachmentFile) {
             def newIssue = jiraNewIssue issue: issue, site: jiraServer
             def key = newIssue.data.key
             
-            // Upload attachment if any
+            if (attachmentFile != null){ // Upload attachment if any
             def attachment = jiraUploadAttachment site: jiraServer, idOrKey: key, file: attachmentFile
+        }
     }
 }
 
