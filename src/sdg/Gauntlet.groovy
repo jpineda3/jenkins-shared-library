@@ -1182,14 +1182,14 @@ private def install_nebula() {
     if (checkOs() == 'Windows') {
         dir('nebula')
         {
-            run_i('pip install -r requirements.txt', true)
+            run_i('pip install --default-timeout=100 -r requirements.txt', true)
             run_i('python setup.py install', true)
         }
     }
     else {
         dir('nebula')
         {
-            run_i('pip3 install -r requirements.txt', true)
+            run_i('pip3 install --default-timeout=100 -r requirements.txt', true)
             run_i('python3 setup.py install', true)
         }
     }
