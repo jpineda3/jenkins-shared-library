@@ -529,8 +529,8 @@ def stage_library(String stage_name) {
             def under_scm = true
             stage("Run MATLAB Toolbox Tests") {
                 def ip = nebula('update-config network-config dutip --board-name='+board)
-                def carrier = nebula('update-config jira-config carrier --board-name='+board )
-                def daughter = nebula('update-config jira-config daughter --board-name='+board )
+                // def carrier = nebula('update-config jira-config carrier --board-name='+board )
+                // def daughter = nebula('update-config jira-config daughter --board-name='+board )
                 println(carrier)
                 println(daughter)
 
