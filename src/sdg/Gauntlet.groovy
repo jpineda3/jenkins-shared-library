@@ -730,9 +730,9 @@ jobs[agent+"-"+board] = {
                 println("Enable resource queueing")
                 jobs[agent + '-' + board] = {
                     def lock_name = extractLockName(board)
-                    if ("Run MATLAB Toolbox Tests" in stages) {
+                    // if ("Run MATLAB Toolbox Tests" in stages) {
                         lock_name = agent
-                    }
+                    // }
                     echo "Acquiring lock for ${lock_name}"
                     lock(lock_name){
                         oneNodeDocker(
