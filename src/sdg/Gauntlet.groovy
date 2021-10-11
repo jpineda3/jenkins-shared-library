@@ -714,6 +714,7 @@ private def run_agents() {
         
         println('Agent: ' + agent + ' Board: ' + board)
         println('Number of stages to run: ' + num_stages.toString())
+        println(stages)
 /*
 jobs[agent+"-"+board] = {
   node(agent) {
