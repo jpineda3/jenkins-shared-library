@@ -607,7 +607,7 @@ def stage_library(String stage_name) {
  */
 def add_stage(cls, String option='stopWhenFail', delegatedCls=null) {
     def newCls;
-    if (cls == 'MATLABTests'){
+    if (cls == 'harness.stage_library("MATLABTests")'){
         gauntEnv.enable_nuc_queuing = true
     }
     switch (option){
