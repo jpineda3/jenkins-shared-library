@@ -41,6 +41,7 @@ def construct(List dependencies, hdlBranch, linuxBranch, bootPartitionBranch, fi
             enable_update_boot_pre_docker: false,
             board_sub_categories : ['rx2tx2'],
             enable_resource_queuing: false,
+            enable_nuc_queuing: false,
             setup_called: false,
             nebula_debug: false,
             log_jira: false,
@@ -606,6 +607,9 @@ def stage_library(String stage_name) {
  */
 def add_stage(cls, String option='stopWhenFail', delegatedCls=null) {
     def newCls;
+    if (cls == 'MATLABTests'){
+        gauntEnv.enable_nuc_queuing = true
+    }
     switch (option){
         case 'stopWhenFail':
             newCls = new FailSafeWrapper(cls, true, delegatedCls)
@@ -729,10 +733,12 @@ jobs[agent+"-"+board] = {
             if( enable_resource_queuing ){
                 println("Enable resource queueing")
                 jobs[agent + '-' + board] = {
-                    def lock_name = extractLockName(board)
-                    // if ("Run MATLAB Toolbox Tests" in stages) {
+                    def lock_name = ''
+                    if (gauntEnv.enable_nuc_queuing) {
                         lock_name = agent
-                    // }
+                    }else{
+                        lock_name = extractLockName(board)
+                    }
                     echo "Acquiring lock for ${lock_name}"
                     lock(lock_name){
                         oneNodeDocker(
