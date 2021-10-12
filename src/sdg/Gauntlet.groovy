@@ -735,8 +735,8 @@ jobs[agent+"-"+board] = {
             if( enable_resource_queuing ){
                 println("Enable resource queueing")
                 jobs[agent + '-' + board] = {
-                    def name = ''
-                    name = extractLockName(board)
+                    def lock_name = ''
+                    lock_name = extractLockName(board)
                     echo "Acquiring lock for ${lock_name}"
                     lock(lock_agent){
                         lock(lock_name){
