@@ -660,7 +660,7 @@ private def run_agents() {
 
     def lock_agent = ''
         if (gauntEnv.lock_agent) {
-            println('Locking agent: '+agent'. Only one test executor is running on the agent.')
+            println('Locking agent: '+agent+'. Only one test executor is running on the agent.')
             lock_agent = agent
         }
 
