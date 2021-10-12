@@ -41,7 +41,7 @@ def construct(List dependencies, hdlBranch, linuxBranch, bootPartitionBranch, fi
             enable_update_boot_pre_docker: false,
             board_sub_categories : ['rx2tx2'],
             enable_resource_queuing: false,
-            enable_nuc_queuing: false,
+            lock_agent: false,
             setup_called: false,
             nebula_debug: false,
             log_jira: false,
@@ -607,8 +607,6 @@ def stage_library(String stage_name) {
  */
 def add_stage(cls, String option='stopWhenFail', delegatedCls=null) {
     def newCls;
-    println('In add_stage')
-    println(cls)
     switch (option){
         case 'stopWhenFail':
             newCls = new FailSafeWrapper(cls, true, delegatedCls)
@@ -659,6 +657,12 @@ private def run_agents() {
     if (docker_args instanceof List) {
         docker_args = docker_args.join(' ')
     }
+
+    def lock_agent = ''
+        if (gauntEnv.lock_agent) {
+            println('Locking agent: '+agent'. Only one test executor is running on the agent.')
+            lock_agent = agent
+        }
 
     
     def oneNode = { agent, num_stages, stages, board, docker_stat  ->
@@ -717,7 +721,6 @@ private def run_agents() {
         
         println('Agent: ' + agent + ' Board: ' + board)
         println('Number of stages to run: ' + num_stages.toString())
-        println(stages)
 /*
 jobs[agent+"-"+board] = {
   node(agent) {
@@ -732,24 +735,22 @@ jobs[agent+"-"+board] = {
             if( enable_resource_queuing ){
                 println("Enable resource queueing")
                 jobs[agent + '-' + board] = {
-                    def lock_name = ''
-                    if (gauntEnv.enable_nuc_queuing) {
-                        lock_name = agent
-                    }else{
-                        lock_name = extractLockName(board)
-                    }
+                    def name = ''
+                    name = extractLockName(board)
                     echo "Acquiring lock for ${lock_name}"
-                    lock(lock_name){
-                        oneNodeDocker(
-                            agent,
-                            num_stages,
-                            stages,
-                            board,
-                            docker_image,
-                            enable_update_boot_pre_docker,
-                            pre_docker_cls, 
-                            docker_status
-                        )
+                    lock(lock_agent){
+                        lock(lock_name){
+                            oneNodeDocker(
+                                agent,
+                                num_stages,
+                                stages,
+                                board,
+                                docker_image,
+                                enable_update_boot_pre_docker,
+                                pre_docker_cls, 
+                                docker_status
+                            )
+                        }
                     }
                  };
             }else{
@@ -811,6 +812,15 @@ def set_iio_uri_baudrate(iio_uri_baudrate) {
 def set_enable_resource_queuing(enable_resource_queuing) {
     gauntEnv.enable_resource_queuing = enable_resource_queuing
 }
+
+/**
+ * Set lock_agent. Set to true to effectively use just one test executor on agents
+ * @param lock_agent Boolean true to enable
+ */
+def set_lock_agent(lock_agent) {
+    gauntEnv.lock_agent = lock_agent
+}
+
 
 /**
  * Set elastic server address. Setting will use a non-default elastic search server
