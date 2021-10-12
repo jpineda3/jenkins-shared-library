@@ -544,6 +544,10 @@ def stage_library(String stage_name) {
             }
             break
     case 'MATLABTests':
+        println('Added Run MATLAB Toolbox Tests')
+        gauntEnv.lock_agent = true
+        println('lock agent?')
+        println(gauntEnv.lock_agent)
         cls = { String board ->
             def under_scm = true
             stage("Run MATLAB Toolbox Tests") {
@@ -721,7 +725,7 @@ private def run_agents() {
         if (gauntEnv.lock_agent) {
             println('Locking agent: '+agent+'. Only one test executor is running on the agent.')
             lock_agent = agent
-         }
+        }
 /*
 jobs[agent+"-"+board] = {
   node(agent) {
@@ -756,7 +760,8 @@ jobs[agent+"-"+board] = {
                  };
             }else{
                 jobs[agent + '-' + board] = { 
-                    oneNodeDocker(
+                    lock(lock_agent){
+                      oneNodeDocker(
                             agent,
                             num_stages,
                             stages,
@@ -765,7 +770,9 @@ jobs[agent+"-"+board] = {
                             enable_update_boot_pre_docker,
                             pre_docker_cls,
                             docker_status
-                        )
+                        )  
+                    }
+                    
                  };
             }
             
