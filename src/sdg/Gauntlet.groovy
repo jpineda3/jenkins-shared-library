@@ -657,14 +657,9 @@ private def run_agents() {
     if (docker_args instanceof List) {
         docker_args = docker_args.join(' ')
     }
-
-    def lock_agent = ''
-        if (gauntEnv.lock_agent) {
-            println('Locking agent: '+agent+'. Only one test executor is running on the agent.')
-            lock_agent = agent
-        }
-
     
+
+
     def oneNode = { agent, num_stages, stages, board, docker_stat  ->
         def k
         node(agent) {
@@ -721,6 +716,12 @@ private def run_agents() {
         
         println('Agent: ' + agent + ' Board: ' + board)
         println('Number of stages to run: ' + num_stages.toString())
+
+        def lock_agent = ''
+        if (gauntEnv.lock_agent) {
+            println('Locking agent: '+agent+'. Only one test executor is running on the agent.')
+            lock_agent = agent
+         }
 /*
 jobs[agent+"-"+board] = {
   node(agent) {
