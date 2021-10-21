@@ -1018,6 +1018,7 @@ private def checkOs() {
 
 def nebula(cmd, full=false, show_log=false, report_error=false) {
     // full=false
+    def script_out = ''
     if (gauntEnv.nebula_debug) {
         show_log = true
     }
@@ -1038,12 +1039,9 @@ def nebula(cmd, full=false, show_log=false, report_error=false) {
                 sh cmd
                 if (fileExists(outfile))
                     script_out = readFile(outfile).trim()
-                    echo script_out
             }catch(Exception ex){
-                echo ex.getMessage()
                 if (fileExists(outfile)){
                     script_out = readFile(outfile).trim()
-                    echo script_out
                     lines = script_out.split('\n')
                     def err_line = false
                     for (i = 1; i < lines.size(); i++) {
@@ -1175,7 +1173,7 @@ private def install_libiio() {
             bat('build')
             {
                 //sh 'cmake .. -DPYTHON_BINDINGS=ON'
-                bat 'cmake ..'
+                bat 'cmake .. -DPYTHON_BINDINGS=ON -DHAVE_DNS_SD=OFF'
                 bat 'cmake --build . --config Release --install'
             }
         }
@@ -1187,7 +1185,7 @@ private def install_libiio() {
             dir('build')
             {
                 //sh 'cmake .. -DPYTHON_BINDINGS=ON'
-                sh 'cmake .. -DPYTHON_BINDINGS=ON'
+                sh 'cmake .. -DPYTHON_BINDINGS=ON -DHAVE_DNS_SD=OFF'
                 sh 'make'
                 sh 'make install'
                 sh 'ldconfig'
@@ -1271,13 +1269,20 @@ private def setupAgent(deps, skip_cleanup = false, docker_status) {
 }
 
 private def get_gitsha(String board){
-    dir ('outs'){
-        script{ properties = readYaml file: 'properties.yaml' }
+    if (gauntEnv.nebula_local_fs_source_root == "local_fs"){
+        set_elastic_field(board, 'hdl_hash', 'NA')
+        set_elastic_field(board, 'linux_hash', 'NA')
+        return
     }
+
     if (gauntEnv.firmware_boards.contains(board)){
         set_elastic_field(board, 'hdl_hash', 'NA')
         set_elastic_field(board, 'linux_hash', 'NA')
         return
+    }
+    
+    dir ('outs'){
+        script{ properties = readYaml file: 'properties.yaml' }
     }
 
     if (gauntEnv.bootPartitionBranch == 'NA'){
