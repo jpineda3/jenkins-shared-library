@@ -504,6 +504,15 @@ def stage_library(String stage_name) {
                             }
                         }
                     }catch(Exception ex){
+                        // log Jira
+                        try{
+                            carrier = nebula('update-config jira-config carrier --board-name='+board )
+                            daughter = nebula('update-config jira-config daughter --board-name='+board )
+                            description = "LibAD9361Tests Failed: ${ex.getMessage()}"
+                            description += "\n"+get_gitsha(board).toMapString()
+                        } finally{
+                            logJira([summary:'['+carrier+'-'+daughter+'] libad9361 tests failed.', description:description]) 
+                        }
                         unstable("LibAD9361Tests Failed: ${ex.getMessage()}")
                     }finally{
                         dir('libad9361-iio/build'){
