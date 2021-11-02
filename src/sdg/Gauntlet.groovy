@@ -531,6 +531,8 @@ def stage_library(String stage_name) {
             def under_scm = true
             stage("Run MATLAB Toolbox Tests") {
                 def ip = nebula('update-config network-config dutip --board-name='+board)
+                def carrier = nebula('update-config jira-config carrier --board-name='+board )
+                def daughter = nebula('update-config jira-config daughter --board-name='+board )
                 sh 'cp -r /root/.matlabro /root/.matlab'
                 under_scm = isMultiBranchPipeline()
                 if (under_scm)
@@ -544,6 +546,14 @@ def stage_library(String stage_name) {
                     createMFile()
                     try{
                         sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
+                    }catch(all){
+                        // log Jira
+                        try{
+                            description = ""
+                            description += get_gitsha(board).toMapString()
+                        } finally{
+                            logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
+                        }
                     }finally{
                         junit testResults: '*.xml', allowEmptyResults: true
                     }
@@ -557,7 +567,15 @@ def stage_library(String stage_name) {
                         createMFile()
                         try{
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
-                        }finally{
+                        }catch(all){
+                        // log Jira
+                        try{
+                            description = ""
+                            description += get_gitsha(board).toMapString()
+                        } finally{
+                            logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
+                        }
+                    }finally{
                             junit testResults: '*.xml', allowEmptyResults: true    
                         }
                     }
