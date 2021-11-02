@@ -397,6 +397,9 @@ def stage_library(String stage_name) {
                         def ip = nebula('update-config network-config dutip --board-name='+board)
                         def serial = nebula('update-config uart-config address --board-name='+board)
                         def uri;
+                        def carrier = nebula('update-config jira-config carrier --board-name='+board )
+                        def daughter = nebula('update-config jira-config daughter --board-name='+board )
+                        def pytest_attachment = null
                         println('IP: ' + ip)
                         // temporarily get pytest-libiio from another source
                         run_i('git clone -b "' + gauntEnv.pytest_libiio_branch + '" ' + gauntEnv.pytest_libiio_repo, true)
@@ -449,11 +452,21 @@ def stage_library(String stage_name) {
                                     println('Parsing pytest results failed')
                                     echo getStackTrace(ex)
                                 }
+                                pytest_attachment = board+"_reports.xml"
                             }
                             
                             // throw exception if pytest failed
                             if ((statusCode != 5) && (statusCode != 0)){
                                 // Ignore error 5 which means no tests were run
+                                // log Jira
+                                dir('testxml'){
+                                    try{
+                                        description = ""
+                                        description += get_gitsha(board).toMapString()
+                                    } finally{
+                                        logJira([summary:'['+carrier+'-'+daughter+'] PyADI tests failed.', description: description, attachment:[pytest_attachment]])  
+                                    }
+                                } 
                                 unstable("PyADITests Failed")
                             }                
                         }
