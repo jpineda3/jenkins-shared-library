@@ -37,6 +37,8 @@ private def call(hdlBranch, linuxBranch, bootPartitionBranch,firmwareVersion, bo
             setup_called: false,
             nebula_debug: false,
             nebula_local_fs_source_root: '/var/lib/tftpboot',
+            log_jira: false,
+            log_jira_stages: [],
             elastic_server: '',
             iio_uri_source: 'ip',
             iio_uri_baudrate: 921600,
