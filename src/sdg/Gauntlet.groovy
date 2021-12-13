@@ -1033,7 +1033,7 @@ def set_log_jira_stages(log_jira_stages) {
  */
 
 def logJira(jiraArgs) {
-    defaultFields = [site:'sdg-jira',project:'HTH', assignee:'JPineda3', issuetype:'Bug', components:"KuiperTesting", description:"Issue exists in recent build."]
+    defaultFields = [site:'sdg-jira',project:'GTSQA', assignee:'JPineda3', issuetype:'Bug', components:"KuiperTesting", description:"Issue exists in recent build."]
     optionalFields = ['assignee','issuetype','description']
     def key = ''
 
