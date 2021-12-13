@@ -194,8 +194,6 @@ def stage_library(String stage_name) {
                         set_elastic_field(board, 'last_failing_stage_failure', failing_msg)
                         stage_library('SendResults').call(board)
                     }
-                    if (is_nominal_exception)
-                        throw new NominalException('UpdateBOOTFiles failed: '+ ex.getMessage())
                     // log Jira
                     try {
                         carrier = nebula('update-config jira-config carrier --board-name='+board )
@@ -205,6 +203,17 @@ def stage_library(String stage_name) {
                     } finally{
                         logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
                     }
+                    if (is_nominal_exception)
+                        throw new NominalException('UpdateBOOTFiles failed: '+ ex.getMessage())
+                    // // log Jira
+                    // try {
+                    //     carrier = nebula('update-config jira-config carrier --board-name='+board )
+                    //     daughter = nebula('update-config jira-config daughter --board-name='+board )
+                    //     description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                    //     description += "\n"+failing_msg
+                    // } finally{
+                    //     logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
+                    // }
                     throw new Exception('UpdateBOOTFiles failed: '+ ex.getMessage())
                 }finally{
                     //archive uart logs
