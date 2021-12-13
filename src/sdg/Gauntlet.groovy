@@ -558,8 +558,7 @@ def stage_library(String stage_name) {
                     }catch(all){
                         // log Jira
                         try{
-                            description = ""
-                            description += "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
                         }
@@ -579,8 +578,7 @@ def stage_library(String stage_name) {
                         }catch(all){
                         // log Jira
                         try{
-                            description = ""
-                            description += "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
                         }
