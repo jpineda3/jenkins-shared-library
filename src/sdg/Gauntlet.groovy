@@ -142,6 +142,15 @@ def stage_library(String stage_name) {
                         //get git sha properties of files
                         get_gitsha(board)
                     }catch(Exception ex){
+                        // log Jira
+                        try {
+                            carrier = nebula('update-config jira-config carrier --board-name='+board )
+                            daughter = nebula('update-config jira-config daughter --board-name='+board )
+                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            description += "\n"+failing_msg
+                        } finally{
+                            logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
+                        }
                         throw new Exception('Downloader error: '+ ex.getMessage()) 
                     }
                     
@@ -194,26 +203,17 @@ def stage_library(String stage_name) {
                         set_elastic_field(board, 'last_failing_stage_failure', failing_msg)
                         stage_library('SendResults').call(board)
                     }
+                    if (is_nominal_exception)
+                        throw new NominalException('UpdateBOOTFiles failed: '+ ex.getMessage())
                     // log Jira
                     try {
                         carrier = nebula('update-config jira-config carrier --board-name='+board )
                         daughter = nebula('update-config jira-config daughter --board-name='+board )
-                        description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                        description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         description += "\n"+failing_msg
                     } finally{
                         logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
                     }
-                    if (is_nominal_exception)
-                        throw new NominalException('UpdateBOOTFiles failed: '+ ex.getMessage())
-                    // // log Jira
-                    // try {
-                    //     carrier = nebula('update-config jira-config carrier --board-name='+board )
-                    //     daughter = nebula('update-config jira-config daughter --board-name='+board )
-                    //     description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
-                    //     description += "\n"+failing_msg
-                    // } finally{
-                    //     logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
-                    // }
                     throw new Exception('UpdateBOOTFiles failed: '+ ex.getMessage())
                 }finally{
                     //archive uart logs
@@ -375,7 +375,7 @@ def stage_library(String stage_name) {
                             try {
                                 carrier = nebula('update-config jira-config carrier --board-name='+board )
                                 daughter = nebula('update-config jira-config daughter --board-name='+board )
-                                description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                                description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                                 description += "\n"+failed_test
                             } finally {
                                 logJira([summary:'['+carrier+'-'+daughter+'] Linux tests failed.', description:description, attachment:[board+"_diag_report.tar.bz2"]]) 
@@ -471,7 +471,7 @@ def stage_library(String stage_name) {
                                 dir('testxml'){
                                     try{
                                         description = ""
-                                        description += "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                                        description += "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                                     } finally{
                                         logJira([summary:'['+carrier+'-'+daughter+'] PyADI tests failed.', description: description, attachment:[pytest_attachment]])  
                                     }
@@ -517,7 +517,7 @@ def stage_library(String stage_name) {
                         try{
                             carrier = nebula('update-config jira-config carrier --board-name='+board )
                             daughter = nebula('update-config jira-config daughter --board-name='+board )
-                            description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                             description += "\n"+"LibAD9361Tests Failed: ${ex.getMessage()}"
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] libad9361 tests failed.', description:description]) 
@@ -559,7 +559,7 @@ def stage_library(String stage_name) {
                         // log Jira
                         try{
                             description = ""
-                            description += "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            description += "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
                         }
@@ -580,7 +580,7 @@ def stage_library(String stage_name) {
                         // log Jira
                         try{
                             description = ""
-                            description += "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            description += "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
                         }
