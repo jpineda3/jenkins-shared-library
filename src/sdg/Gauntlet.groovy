@@ -542,6 +542,7 @@ def stage_library(String stage_name) {
                 def ip = nebula('update-config network-config dutip --board-name='+board)
                 def carrier = nebula('update-config jira-config carrier --board-name='+board )
                 def daughter = nebula('update-config jira-config daughter --board-name='+board )
+                def description = ""
                 sh 'cp -r /root/.matlabro /root/.matlab'
                 under_scm = isMultiBranchPipeline()
                 if (under_scm)
@@ -578,12 +579,9 @@ def stage_library(String stage_name) {
                         }catch(all){
                             // log Jira
                             println("Caught error exit code")
-                            def description = ""
                             try{
                                 println("Try writing description")
-                                failures = readFile 'failures.txt'
-                                description += "\n".concat(readFile 'failures.txt')
-                                println(description)
+                                description += readFile 'failures.txt'
                                 description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                                 println(description)
                             } finally{
@@ -1071,7 +1069,7 @@ def logJira(jiraArgs) {
                 echo 'Updating existing issue..'
                 existingIssue = existingIssuesSearch.data.issues
                 key = existingIssue[0].key
-                issueUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+'] ' + jiraArgs.description
+                issueUpdate = '['+env.JOB_NAME+'-build-'+env.BUILD_NUMBER+']\n' + jiraArgs.description
                 comment = [body: issueUpdate]
                 jiraAddComment site: jiraArgs.site, idOrKey: key, input: comment
             }
