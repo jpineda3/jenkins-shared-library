@@ -577,15 +577,13 @@ def stage_library(String stage_name) {
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
                         }catch(all){
                             // log Jira
-                            println("Cat file")
-                            sh 'cat failures.txt'
                             println("Caught error exit code")
                             def description = ""
                             try{
                                 println("Try writing description")
                                 failures = readFile 'failures.txt'
                                 println(failures)
-                                description += failures
+                                description += "\n" + readFile 'failures.txt'
                                 description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                                 println(description)
                             } finally{
