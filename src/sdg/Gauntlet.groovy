@@ -576,14 +576,18 @@ def stage_library(String stage_name) {
                         try{
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
                         }catch(all){
-                        // log Jira
-                        try{
-                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
-                        } finally{
-                            logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
-                        }
-                    }finally{
-                            junit testResults: '*.xml', allowEmptyResults: true    
+                            // log Jira
+                            println("Caught error exit code")
+                            def definition = ""
+                            try{
+                                println("Try writing description")
+                                description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            } finally{
+                                println("Log Jira")
+                                logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
+                            }
+                        }finally{
+                                junit testResults: '*.xml', allowEmptyResults: true    
                         }
                     }
                 }
