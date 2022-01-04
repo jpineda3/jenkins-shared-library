@@ -583,7 +583,8 @@ def stage_library(String stage_name) {
                             def description = ""
                             try{
                                 println("Try writing description")
-                                description += String new File('failures.txt').text
+                                String description = new File('failures.txt').text
+                                println(description)
                                 description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                                 println(description)
                             } finally{
