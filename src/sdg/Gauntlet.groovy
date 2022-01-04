@@ -578,7 +578,7 @@ def stage_library(String stage_name) {
                         }catch(all){
                             // log Jira
                             println("Caught error exit code")
-                            def definition = ""
+                            def description = ""
                             try{
                                 println("Try writing description")
                                 description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
