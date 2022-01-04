@@ -582,9 +582,9 @@ def stage_library(String stage_name) {
                             try{
                                 println("Try writing description")
                                 failures = readFile 'failures.txt'
-                                println(failures)
-                                description = "\n" + readFile 'failures.txt'
-                                description = "{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
+                                description += readFile 'failures.txt'
+                                println(description)
+                                description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                                 println(description)
                             } finally{
                                 println("Log Jira")
