@@ -581,7 +581,8 @@ def stage_library(String stage_name) {
                             def description = ""
                             try{
                                 println("Try writing description")
-                                description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                                description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n"
+                                description += new File('failures.txt').text
                             } finally{
                                 println("Log Jira")
                                 logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
