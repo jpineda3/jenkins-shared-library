@@ -563,7 +563,7 @@ def stage_library(String stage_name) {
                         try{
                             description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         } finally{
-                            logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
+                            logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'_HWTestResults.xml']])  
                         }
                     }finally{
                         junit testResults: '*.xml', allowEmptyResults: true
