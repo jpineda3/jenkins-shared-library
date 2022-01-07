@@ -372,11 +372,12 @@ def stage_library(String stage_name) {
 
                         if(failed_test && !failed_test.allWhitespace){
                             // log Jira
+                            def description = ""
                             try {
                                 carrier = nebula('update-config jira-config carrier --board-name='+board )
                                 daughter = nebula('update-config jira-config daughter --board-name='+board )
-                                description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                                 description += "\n"+failed_test
+                                description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                             } finally {
                                 logJira([summary:'['+carrier+'-'+daughter+'] Linux tests failed.', description:description, attachment:[board+"_diag_report.tar.bz2"]]) 
                             }
@@ -408,6 +409,7 @@ def stage_library(String stage_name) {
                         def uri;
                         def carrier = nebula('update-config jira-config carrier --board-name='+board )
                         def daughter = nebula('update-config jira-config daughter --board-name='+board )
+                        def description = ""
                         def pytest_attachment = null
                         println('IP: ' + ip)
                         // temporarily get pytest-libiio from another source
@@ -470,8 +472,7 @@ def stage_library(String stage_name) {
                                 // log Jira
                                 dir('testxml'){
                                     try{
-                                        description = ""
-                                        description += "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                                        description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                                     } finally{
                                         logJira([summary:'['+carrier+'-'+daughter+'] PyADI tests failed.', description: description, attachment:[pytest_attachment]])  
                                     }
@@ -514,11 +515,12 @@ def stage_library(String stage_name) {
                         }
                     }catch(Exception ex){
                         // log Jira
+                        def description = ""
                         try{
                             carrier = nebula('update-config jira-config carrier --board-name='+board )
                             daughter = nebula('update-config jira-config daughter --board-name='+board )
-                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                             description += "\n"+"LibAD9361Tests Failed: ${ex.getMessage()}"
+                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] libad9361 tests failed.', description:description]) 
                         }
