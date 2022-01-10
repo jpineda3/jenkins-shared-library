@@ -472,7 +472,11 @@ def stage_library(String stage_name) {
                                 // log Jira
                                 dir('testxml'){
                                     try{
+                                        println("Inside testxml")
+                                        println(description)
+                                        println("Update description with hash")
                                         description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
+                                        println(description)
                                     } finally{
                                         logJira([summary:'['+carrier+'-'+daughter+'] PyADI tests failed.', description: description, attachment:[pytest_attachment]])  
                                     }
