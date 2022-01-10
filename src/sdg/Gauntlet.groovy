@@ -211,6 +211,8 @@ def stage_library(String stage_name) {
                         daughter = nebula('update-config jira-config daughter --board-name='+board )
                         description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         description += "\n"+failing_msg
+                    } catch(Exception ex){
+                        println('Error updating description.')
                     } finally{
                         logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
                     }
@@ -378,6 +380,8 @@ def stage_library(String stage_name) {
                                 daughter = nebula('update-config jira-config daughter --board-name='+board )
                                 description += "\n"+failed_test
                                 description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
+                            } catch(Exception ex){
+                                println('Error updating description.')
                             } finally {
                                 logJira([summary:'['+carrier+'-'+daughter+'] Linux tests failed.', description:description, attachment:[board+"_diag_report.tar.bz2"]]) 
                             }
@@ -472,12 +476,9 @@ def stage_library(String stage_name) {
                                 // log Jira
                                 dir('testxml'){
                                     try{
-                                        println("Inside testxml")
-                                        println(description)
-                                        println("Update description with hash")
                                         description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                                     } catch(Exception ex){
-                                        println('Git hash not available.')
+                                        println('Error updating description.')
                                     } finally{
                                         logJira([summary:'['+carrier+'-'+daughter+'] PyADI tests failed.', description: description, attachment:[pytest_attachment]])  
                                     }
@@ -526,6 +527,8 @@ def stage_library(String stage_name) {
                             daughter = nebula('update-config jira-config daughter --board-name='+board )
                             description += "\n"+"LibAD9361Tests Failed: ${ex.getMessage()}"
                             description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
+                        } catch(Exception ex){
+                                println('Error updating description.')
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] libad9361 tests failed.', description:description]) 
                         }
@@ -571,7 +574,6 @@ def stage_library(String stage_name) {
                         } catch(Exception ex){
                             println('Error updating description.')
                         } finally{
-                            println("Log Jira")
                             logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'-HWTestResults.xml']])  
                         }
                     }finally{
@@ -595,7 +597,6 @@ def stage_library(String stage_name) {
                             } catch(Exception ex){
                                 println('Error updating description.')
                             } finally{
-                                println("Log Jira")
                                 logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'-HWTestResults.xml']])  
                             }
                         }finally{
