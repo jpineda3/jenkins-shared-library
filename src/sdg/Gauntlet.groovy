@@ -588,7 +588,7 @@ def stage_library(String stage_name) {
                                 println(description)
                             } finally{
                                 println("Log Jira")
-                                logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:['HWTestResults.xml']])  
+                                logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'HWTestResults.xml']])  
                             }
                         }finally{
                                 junit testResults: '*.xml', allowEmptyResults: true    
