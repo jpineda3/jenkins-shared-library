@@ -566,12 +566,16 @@ def stage_library(String stage_name) {
                     }catch(all){
                         // log Jira
                         try{
-                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
+                            description += readFile 'failures.txt'
+                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
+                        } catch(Exception ex){
+                            println('Error updating description.')
                         } finally{
-                            logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'_HWTestResults.xml']])  
+                            println("Log Jira")
+                            logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'-HWTestResults.xml']])  
                         }
                     }finally{
-                        junit testResults: '*.xml', allowEmptyResults: true
+                            junit testResults: '*.xml', allowEmptyResults: true    
                     }
                 }
                 else
@@ -585,15 +589,14 @@ def stage_library(String stage_name) {
                             sh 'IIO_URI="ip:'+ip+'" board="'+board+'" elasticserver='+gauntEnv.elastic_server+' /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab -nosplash -nodesktop -nodisplay -r "run(\'matlab_commands.m\');exit"'
                         }catch(all){
                             // log Jira
-                            println("Caught error exit code")
                             try{
-                                println("Try writing description")
                                 description += readFile 'failures.txt'
                                 description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
-                                println(description)
+                            } catch(Exception ex){
+                                println('Error updating description.')
                             } finally{
                                 println("Log Jira")
-                                logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'HWTestResults.xml']])  
+                                logJira([summary:'['+carrier+'-'+daughter+'] MATLAB tests failed.', description: description, attachment:[board+'-HWTestResults.xml']])  
                             }
                         }finally{
                                 junit testResults: '*.xml', allowEmptyResults: true    
