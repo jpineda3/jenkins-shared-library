@@ -476,7 +476,8 @@ def stage_library(String stage_name) {
                                         println(description)
                                         println("Update description with hash")
                                         description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
-                                        println(description)
+                                    } catch(Exception ex){
+                                        println('Git hash not available.')
                                     } finally{
                                         logJira([summary:'['+carrier+'-'+daughter+'] PyADI tests failed.', description: description, attachment:[pytest_attachment]])  
                                     }
