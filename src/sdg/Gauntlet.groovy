@@ -381,7 +381,7 @@ def stage_library(String stage_name) {
                                 description += "Missing drivers: " + missing_devs.size().toString() + " (" + missing_devs.join(",") + ")\n"
                                 // description += "\n"+failed_test
                                 dmesg_err_count = sh(returnStdout: true, script: 'cat dmesg_err_filtered.log | wc -l').trim()
-                                dmesg_errs = readFile 'dmesg_err_filtered.log'
+                                String[] dmesg_errs = readFile 'dmesg_err_filtered.log'
                                 println(dmesg_errs.size().toString())
                                 description += "dmesg errors: ${dmesg_err_count}\n" + dmesg_errs
                                 description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
