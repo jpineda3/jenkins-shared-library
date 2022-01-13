@@ -382,9 +382,9 @@ def stage_library(String stage_name) {
                                 // description += "\n"+failed_test
                                 dmesg_err_count = sh(returnStdout: true, script: 'cat dmesg_err_filtered.log | wc -l').trim()
                                 sh 'cat dmesg_err_filtered.log'
-                                description += "dmesg errors: ${dmesg_err_count}\n" + readFile 'dmesg_err_filtered.log'
-                                String[] dmesg_errs = readFile 'dmesg_err_filtered.log'
+                                dmesg_errs = readFile 'dmesg_err_filtered.log'
                                 println(dmesg_errs)
+                                description += "dmesg errors: ${dmesg_err_count}\n" + dmesg_errs
                                 description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                             } catch(Exception desc){
                                 println('Error updating description.')
