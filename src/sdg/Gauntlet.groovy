@@ -378,7 +378,9 @@ def stage_library(String stage_name) {
                             try {
                                 carrier = nebula('update-config jira-config carrier --board-name='+board )
                                 daughter = nebula('update-config jira-config daughter --board-name='+board )
-                                description += "\n"+failed_test
+                                description += 'Missing drivers: ' + missing_devs.size().toString() + ' (' + missing_devs.join(",") + ')'
+                                // description += "\n"+failed_test
+                                sh 'cat dmesg_err_filtered.log | wc -l'
                                 description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                             } catch(Exception desc){
                                 println('Error updating description.')
