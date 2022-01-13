@@ -144,8 +144,8 @@ def stage_library(String stage_name) {
                     }catch(Exception ex){
                         // log Jira
                         try {
-                            carrier = nebula('update-config jira-config carrier --board-name='+board )
-                            daughter = nebula('update-config jira-config daughter --board-name='+board )
+                            carrier = nebula('update-config board-config carrier --board-name='+board )
+                            daughter = nebula('update-config board-config daughter --board-name='+board )
                             description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                             description += "\n"+failing_msg
                         } finally{
@@ -207,8 +207,8 @@ def stage_library(String stage_name) {
                         throw new NominalException('UpdateBOOTFiles failed: '+ ex.getMessage())
                     // log Jira
                     try {
-                        carrier = nebula('update-config jira-config carrier --board-name='+board )
-                        daughter = nebula('update-config jira-config daughter --board-name='+board )
+                        carrier = nebula('update-config board-config carrier --board-name='+board )
+                        daughter = nebula('update-config board-config daughter --board-name='+board )
                         description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
                         description += "\n"+failing_msg
                     } catch(Exception desc){
@@ -376,8 +376,8 @@ def stage_library(String stage_name) {
                             // log Jira
                             def description = ""
                             try {
-                                carrier = nebula('update-config jira-config carrier --board-name='+board )
-                                daughter = nebula('update-config jira-config daughter --board-name='+board )
+                                carrier = nebula('update-config board-config carrier --board-name='+board )
+                                daughter = nebula('update-config board-config daughter --board-name='+board )
                                 description += 'Missing drivers: ' + missing_devs.size().toString() + ' (' + missing_devs.join(",") + ')'
                                 // description += "\n"+failed_test
                                 sh 'cat dmesg_err_filtered.log | wc -l'
@@ -413,8 +413,8 @@ def stage_library(String stage_name) {
                         def ip = nebula('update-config network-config dutip --board-name='+board)
                         def serial = nebula('update-config uart-config address --board-name='+board)
                         def uri;
-                        def carrier = nebula('update-config jira-config carrier --board-name='+board )
-                        def daughter = nebula('update-config jira-config daughter --board-name='+board )
+                        def carrier = nebula('update-config board-config carrier --board-name='+board )
+                        def daughter = nebula('update-config board-config daughter --board-name='+board )
                         def description = ""
                         def pytest_attachment = null
                         println('IP: ' + ip)
@@ -525,8 +525,8 @@ def stage_library(String stage_name) {
                         // log Jira
                         def description = ""
                         try{
-                            carrier = nebula('update-config jira-config carrier --board-name='+board )
-                            daughter = nebula('update-config jira-config daughter --board-name='+board )
+                            carrier = nebula('update-config board-config carrier --board-name='+board )
+                            daughter = nebula('update-config board-config daughter --board-name='+board )
                             description += "\n"+"LibAD9361Tests Failed: ${ex.getMessage()}"
                             description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                         } catch(Exception desc){
@@ -552,8 +552,8 @@ def stage_library(String stage_name) {
             def under_scm = true
             stage("Run MATLAB Toolbox Tests") {
                 def ip = nebula('update-config network-config dutip --board-name='+board)
-                def carrier = nebula('update-config jira-config carrier --board-name='+board )
-                def daughter = nebula('update-config jira-config daughter --board-name='+board )
+                def carrier = nebula('update-config board-config carrier --board-name='+board )
+                def daughter = nebula('update-config board-config daughter --board-name='+board )
                 def description = ""
                 sh 'cp -r /root/.matlabro /root/.matlab'
                 under_scm = isMultiBranchPipeline()
