@@ -491,7 +491,7 @@ def stage_library(String stage_name) {
                     }
                     finally
                     {
-                        // archiveArtifacts artifacts: 'pyadi-iio/testxml/*.xml', followSymlinks: false, allowEmptyArchive: true
+                        archiveArtifacts artifacts: 'pyadi-iio/testxml/*.xml', followSymlinks: false, allowEmptyArchive: true
                         junit testResults: 'pyadi-iio/testxml/*.xml', allowEmptyResults: true                    
                     }
                 }
