@@ -478,9 +478,8 @@ def stage_library(String stage_name) {
                                 // log Jira
                                 dir('testxml'){
                                     try{
-                                        // sh 'grep \" name=.*<failure\" *.xml | sed \'s/.*name=\"\\(.*\\)" .*<failure.*/\\1/\' > failures.txt'
-                                        // description += readFile 'failures.txt'
-                                        description += sh(returnStdout: true, script: 'grep \" name=.*<failure\" *.xml | sed \'s/.*name=\"\\(.*\\)" .*<failure.*/\\1/\' > failures.txt')
+                                        sh 'grep \" name=.*<failure\" *.xml | sed \'s/.*name=\"\\(.*\\)" .*<failure.*/\\1/\' > failures.txt'
+                                        description += readFile 'failures.txt'
                                         description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                                     } catch(Exception desc){
                                         println('Error updating description.')
