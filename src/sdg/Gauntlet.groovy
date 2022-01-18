@@ -146,7 +146,7 @@ def stage_library(String stage_name) {
                         try {
                             carrier = nebula('update-config board-config carrier --board-name='+board )
                             daughter = nebula('update-config board-config daughter --board-name='+board )
-                            description += "\n"+"Downloader error: "+ ex.getMessage()
+                            description = "Downloader error: "+ ex.getMessage()
                             description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                         } finally{
                             logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
@@ -209,8 +209,8 @@ def stage_library(String stage_name) {
                     try {
                         carrier = nebula('update-config board-config carrier --board-name='+board )
                         daughter = nebula('update-config board-config daughter --board-name='+board )
-                        description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}"
-                        description += "\n"+failing_msg
+                        description = failing_msg
+                        description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                     } catch(Exception desc){
                         println('Error updating description.')
                     } finally{
