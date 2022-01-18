@@ -143,14 +143,14 @@ def stage_library(String stage_name) {
                         get_gitsha(board)
                     }catch(Exception ex){
                         // log Jira
-                        try {
-                            carrier = nebula('update-config board-config carrier --board-name='+board )
-                            daughter = nebula('update-config board-config daughter --board-name='+board )
-                            description = "Downloader error: "+ ex.getMessage()
-                            description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
-                        } finally{
-                            logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
-                        }
+                        // try {
+                        //     carrier = nebula('update-config board-config carrier --board-name='+board )
+                        //     daughter = nebula('update-config board-config daughter --board-name='+board )
+                        //     description = "Downloader error: "+ ex.getMessage()
+                        //     description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
+                        // } finally{
+                        //     logJira([summary:'['+carrier+'-'+daughter+'] Update BOOT files failed.', description:description, attachment:[board+".log"]]) 
+                        // }
                         throw new Exception('Downloader error: '+ ex.getMessage()) 
                     }
                     
