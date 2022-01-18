@@ -525,11 +525,10 @@ def stage_library(String stage_name) {
                         }
                     }catch(Exception ex){
                         // log Jira
-                        def description = ""
                         try{
                             carrier = nebula('update-config board-config carrier --board-name='+board )
                             daughter = nebula('update-config board-config daughter --board-name='+board )
-                            description += "\n"+"LibAD9361Tests Failed: ${ex.getMessage()}"
+                            description = "LibAD9361Tests Failed: ${ex.getMessage()}"
                             description = "\n{color:#de350b}*"+get_gitsha(board).toMapString()+"*{color}\n".concat(description)
                         } catch(Exception desc){
                                 println('Error updating description.')
