@@ -752,8 +752,15 @@ private def run_agents() {
         def agent = gauntEnv.agents[i]
         def board = gauntEnv.boards[i]
         def stages = gauntEnv.stages
-        if (board=="pluto" && "Run MATLAB Toolbox Tests" in stages){
-            stages.remove("Update BOOT Files")
+        println(gauntEnv.stages)
+        if (board=="pluto"){
+            println("board is pluto")
+            if ("Run MATLAB Toolbox Tests" in stages){
+                println("MATLAB in stages")
+                println(stages)
+                stages.remove("Update BOOT Files")
+                println(stages)
+            }
         }
         def docker_image = gauntEnv.docker_image
         def num_stages = stages.size()
