@@ -756,6 +756,10 @@ private def run_agents() {
         def num_stages = stages.size()
         def lock_agent = ''
 
+        if (board=="pluto"){
+            stages.remove("UpdateBOOTFiles")
+        }
+
         println('Agent: ' + agent + ' Board: ' + board)
         println('Number of stages to run: ' + num_stages.toString())
 
